@@ -1,0 +1,47 @@
+import re
+
+# Функция для замены соседних цифр в числе
+def swap_adjacent_digits(number):
+    digits = list(str(number))
+    for i in range(0, len(digits) - 1, 2):
+        digits[i], digits[i + 1] = digits[i + 1], digits[i]
+    return ''.join(digits)
+
+# Функция для преобразования числа в слова
+def number_to_words(number):
+    words = {
+        '0': 'ноль', '1': 'один', '2': 'два', '3': 'три', '4': 'четыре',
+        '5': 'пять', '6': 'шесть', '7': 'семь', '8': 'восемь', '9': 'девять'
+    }
+    return ' '.join(words[d] for d in str(number))
+
+# Основная функция
+def process_file(file_path, k):
+    with open(file_path, 'r') as file:
+        content = file.read()
+
+    # Регулярное выражение для поиска чисел
+    numbers = re.findall(r'\d+', content)  # Просто ищем все числа
+
+    # Флаг для определения, когда перестать менять цифры
+    stop_processing = False
+
+    for number in numbers:
+        if int(number) % 2 == 0:  # Обрабатываем только четные числа
+            if stop_processing:
+                # Выводим число прописью
+                print(number_to_words(number))
+            else:
+                # Проверяем, есть ли K подряд идущих нулей
+                if '0' * k in number:
+                    stop_processing = True
+                    print(number_to_words(number))
+                else:
+                    # Меняем соседние цифры
+                    swapped_number = swap_adjacent_digits(number)
+                    print(swapped_number)
+
+# Пример использования
+file_path = 'text.txt'  # Укажите путь к вашему файлу
+k = 3  # Укажите значение K
+process_file(file_path, k)
